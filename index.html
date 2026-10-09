@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>自我探索-MBTI心智阶位测评</title>
+  <link rel="stylesheet" href="style.css?v=1">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- 背景光晕装饰 -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- ==================== 封面 ==================== -->
+  <div id="cover-page" class="screen active">
+    <div class="cover">
+      <div class="brand-bar"><span class="brand">自我探索 · MBTI 心智阶位</span></div>
+      <div class="cover-inner">
+        <div class="cover-badge">16 型人格 · 心智成熟度测评</div>
+        <h1 class="cover-h1">MBTI 心智阶位</h1>
+        <p class="cover-sub">同一种人格，也有低阶、中阶与高阶</p>
+        <p class="cover-desc">先选择你的 MBTI 类型，再通过 36 道成长情境题，看清你此刻正处于该类型的哪个心智阶段，并获得专属的进阶画像与成长路径。</p>
+        <button class="btn-main" onclick="goTypePage()">开始测试</button>
+        <div class="cover-tags"><span>无需登录</span><span>即时结果</span><span>36 题 · 约 6 分钟</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 选择 MBTI 类型 ==================== -->
+  <div id="type-page" class="screen">
+    <div class="type-wrap">
+      <div class="type-head">
+        <h2 class="type-h2">选择你的 MBTI 人格</h2>
+        <p class="type-sub">题目会根据你的类型智能组合 · 若还不确定，可先完成一次 MBTI 测试再回来</p>
+      </div>
+      <div class="type-groups" id="type-groups"><!-- JS 渲染 4 大类 16 型卡片 --></div>
+      <div class="type-foot"><button class="btn-back" onclick="show('cover-page')">← 返回</button></div>
+    </div>
+  </div>
+
+  <!-- ==================== 答题 ==================== -->
+  <div id="quiz-page" class="screen">
+    <div class="quiz-top">
+      <div class="quiz-top-row">
+        <span id="q-num">Question 1</span>
+        <span id="q-code">INTJ</span>
+        <span id="q-total">36 total</span>
+      </div>
+      <div class="q-bar-wrap"><div class="q-bar" id="q-bar"></div></div>
+    </div>
+    <div class="quiz-body">
+      <div class="q-dim" id="q-dim">行为选择</div>
+      <h3 class="q-text" id="q-text"></h3>
+      <div class="q-opts" id="q-opts"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 加载 ==================== -->
+  <div id="load-page" class="screen">
+    <div class="load-wrap">
+      <div class="load-orb"></div>
+      <h2 class="load-h2">正在解析你的心智阶位</h2>
+      <p class="load-sub">系统正结合你的类型与作答轨迹，评估你在六大成长维度上的成熟度。</p>
+      <div class="load-bar-wrap"><div class="load-bar" id="load-bar"></div></div>
+      <div class="load-pct" id="load-pct">0%</div>
+      <div class="load-steps" id="load-steps"></div>
+    </div>
+  </div>
+
+  <!-- ==================== 结果 ==================== -->
+  <div id="result-page" class="screen">
+    <div class="result-scroll" id="result-scroll"></div>
+  </div>
+
+  <script src="data-types.js?v=1"></script>
+  <script src="data-questions.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>
