@@ -158,6 +158,23 @@ button { font-family: inherit; cursor: pointer; }
 .ask-item { display: flex; gap: 12px; align-items: flex-start; }
 .ask-mark { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,#6ba3e0,#4f7fc4); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(70,120,190,0.28); }
 .ask-txt { font-size: 14px; line-height: 1.85; color: var(--ink); font-weight: 500; padding-top: 2px; }
+.sec-sub { font-size: 12px; color: var(--ink3); margin: -8px 0 12px 13px; letter-spacing: .3px; }
+
+/* 专属建议：立刻开始做 / 立刻停止 / 如果只做一件 */
+.advice-card { padding: 22px 20px; }
+.advice-block { margin-bottom: 22px; }
+.advice-lab { display: inline-flex; align-items: center; font-size: 12px; font-weight: 700; letter-spacing: .5px; padding: 5px 13px; border-radius: 999px; margin-bottom: 14px; }
+.advice-lab.go { background: rgba(107,163,224,0.16); color: var(--blue-d); border: 1px solid rgba(107,163,224,0.32); }
+.advice-lab.halt { background: rgba(224,138,107,0.15); color: #b4603c; border: 1px solid rgba(224,138,107,0.32); }
+.advice-list { display: flex; flex-direction: column; gap: 15px; }
+.advice-item { display: flex; gap: 12px; align-items: flex-start; }
+.advice-num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 9px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; color: #fff; }
+.advice-item.go .advice-num { background: linear-gradient(135deg,#6ba3e0,#4f7fc4); box-shadow: 0 4px 12px rgba(70,120,190,0.28); }
+.advice-item.halt .advice-num { background: linear-gradient(135deg,#e8a183,#d1795a); box-shadow: 0 4px 12px rgba(190,110,80,0.26); }
+.advice-txt { font-size: 14px; line-height: 1.85; color: var(--ink2); padding-top: 2px; }
+.advice-one { background: linear-gradient(140deg,#e6effb,#d9e6f8); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+.advice-one-lab { font-size: 12px; font-weight: 700; color: var(--blue-d); letter-spacing: .5px; margin-bottom: 8px; font-family: 'Noto Serif SC', serif; }
+.advice-one-txt { font-size: 15px; line-height: 1.8; color: var(--ink); font-weight: 500; }
 
 /* 雷达 + 维度 */
 .duo { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 22px; }
