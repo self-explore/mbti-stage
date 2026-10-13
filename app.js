@@ -11,16 +11,20 @@ let cur = 0;
 let lastResult = null;
 
 // ---------- 阶位定义 ----------
-function tierOf(pct) { if (pct <= 47) return 'low'; if (pct <= 72) return 'mid'; return 'high'; }
+// 阈值由两套回答问题人群模型交叉校准得出，平均后三档占比约 40% / 40% / 20%
+// 两套模型单独看会有差异（未觉醒约 32%~48%），真实比例以线上数据为准
+// 想调比例改这两个数就行：LOW_MAX 调大会让「未觉醒」变多，MID_MAX 调大会让「已觉醒」变少
+const LOW_MAX = 61, MID_MAX = 72;
+function tierOf(pct) { if (pct <= LOW_MAX) return 'low'; if (pct <= MID_MAX) return 'mid'; return 'high'; }
 const TIER = {
-  low:  { name: '低阶', tag: 'low'  },
-  mid:  { name: '中阶', tag: 'mid'  },
-  high: { name: '高阶', tag: 'high' }
+  low:  { name: '未觉醒', tag: 'low'  },
+  mid:  { name: '觉醒中', tag: 'mid'  },
+  high: { name: '已觉醒', tag: 'high' }
 };
 const DIM_TIER_TXT = {
-  low:  '较多受本能与防御支配，是当前的成长卡点',
-  mid:  '已具备觉察，但压力下仍会摇摆反复',
-  high: '已相当成熟整合，是你稳定的优势区'
+  low:  '还困在本能和防御里，是当下的卡点',
+  mid:  '已经有觉察，压力一来还是会反复',
+  high: '整合得比较好了，是你的稳定区'
 };
 
 // ---------- 视图切换 ----------
@@ -207,7 +211,38 @@ function showResult() {
       <div class="stage-bottom"><p class="stage-summary">${stage.summary}</p></div>
     </div>
 
-    <div class="duo fade-enter" style="animation-delay:.1s">
+    <div class="sec fade-enter" style="animation-delay:.08s">
+      <div class="sec-title">为什么会这样</div>
+      <div class="card"><p class="deep-why">${stage.why}</p></div>
+    </div>
+
+    <div class="sec fade-enter" style="animation-delay:.12s">
+      <div class="sec-title">你是这样活的</div>
+      <div class="card">
+        <div class="scene-list">
+          ${stage.scene.map((x, i) => `
+            <div class="scene-item">
+              <span class="scene-idx">${'一二三'[i]}</span>
+              <span class="scene-txt">${x}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="sec fade-enter" style="animation-delay:.16s">
+      <div class="sec-title">现在轮到你回答</div>
+      <div class="card">
+        <div class="ask-list">
+          ${stage.analysis.map(x => `
+            <div class="ask-item">
+              <span class="ask-mark">?</span>
+              <span class="ask-txt">${x}</span>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="duo fade-enter" style="animation-delay:.2s">
       <div class="duo-card">
         <div class="card-title">六维成长光谱</div>
         <canvas id="radar-canvas"></canvas>
@@ -223,7 +258,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.15s">
+    <div class="sec fade-enter" style="animation-delay:.24s">
       <div class="sec-title">你的三阶画像</div>
       <div class="tiers">
         ${['low', 'mid', 'high'].map(k => {
@@ -241,7 +276,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.2s">
+    <div class="sec fade-enter" style="animation-delay:.28s">
       <div class="sec-title">优势与盲点</div>
       <div class="sb-grid">
         <div class="card">
@@ -255,8 +290,8 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.25s">
-      <div class="sec-title">通往高阶的路径</div>
+    <div class="sec fade-enter" style="animation-delay:.32s">
+      <div class="sec-title">通往已觉醒的路径</div>
       <div class="card">
         <div class="growth-list">
           ${t.growth.map(g => `<div class="growth-item"><span class="growth-num"></span><span class="growth-txt">${g}</span></div>`).join('')}
@@ -264,7 +299,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.3s">
+    <div class="sec fade-enter" style="animation-delay:.36s">
       <div class="sec-title">写给你的话</div>
       <div class="golden-box">
         <div class="golden-quote">${t.quote}</div>
@@ -272,7 +307,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="r-foot fade-enter" style="animation-delay:.35s">
+    <div class="r-foot fade-enter" style="animation-delay:.4s">
       <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}</strong><br>当前处于「${TIER[tier].name}」阶段 · 成熟度 ${r.overall}%</div>
       <div class="foot-btns">
         <button class="fbtn" onclick="restart()">重新测试</button>
