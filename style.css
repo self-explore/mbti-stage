@@ -148,6 +148,17 @@ button { font-family: inherit; cursor: pointer; }
 .sec-title::before { content:''; width: 4px; height: 18px; border-radius: 2px; background: linear-gradient(180deg,#6ba3e0,#4f7fc4); }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: var(--shadow-s); backdrop-filter: blur(12px); }
 
+/* 深度拆解：为什么会这样 / 典型场景 / 自我分析 */
+.deep-why { font-size: 14px; line-height: 2; color: var(--ink2); }
+.scene-list { display: flex; flex-direction: column; gap: 14px; }
+.scene-item { display: flex; gap: 12px; align-items: flex-start; }
+.scene-idx { flex-shrink: 0; width: 26px; height: 26px; border-radius: 9px; background: rgba(107,163,224,0.16); border: 1px solid rgba(107,163,224,0.28); color: var(--blue-d); font-family: 'Noto Serif SC', serif; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.scene-txt { font-size: 14px; line-height: 1.85; color: var(--ink2); padding-top: 2px; }
+.ask-list { display: flex; flex-direction: column; gap: 16px; }
+.ask-item { display: flex; gap: 12px; align-items: flex-start; }
+.ask-mark { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg,#6ba3e0,#4f7fc4); color: #fff; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(70,120,190,0.28); }
+.ask-txt { font-size: 14px; line-height: 1.85; color: var(--ink); font-weight: 500; padding-top: 2px; }
+
 /* 雷达 + 维度 */
 .duo { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 22px; }
 .duo-card { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 22px; box-shadow: var(--shadow-s); backdrop-filter: blur(12px); }
