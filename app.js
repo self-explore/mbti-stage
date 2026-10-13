@@ -242,7 +242,38 @@ function showResult() {
       </div>
     </div>
 
-    <div class="duo fade-enter" style="animation-delay:.2s">
+    <div class="sec fade-enter" style="animation-delay:.2s">
+      <div class="sec-title">给你的专属建议</div>
+      <div class="sec-sub">${t.code} × ${TIER[tier].name} 定制 · 本周就能开始</div>
+      <div class="card advice-card">
+        <div class="advice-block">
+          <div class="advice-lab go">立刻开始做</div>
+          <div class="advice-list">
+            ${stage.advice.start.map((x, i) => `
+              <div class="advice-item go">
+                <span class="advice-num">${i + 1}</span>
+                <span class="advice-txt">${x}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="advice-block">
+          <div class="advice-lab halt">立刻停止</div>
+          <div class="advice-list">
+            ${stage.advice.stop.map(x => `
+              <div class="advice-item halt">
+                <span class="advice-num">×</span>
+                <span class="advice-txt">${x}</span>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="advice-one">
+          <div class="advice-one-lab">如果只做一件</div>
+          <div class="advice-one-txt">${stage.advice.one}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="duo fade-enter" style="animation-delay:.24s">
       <div class="duo-card">
         <div class="card-title">六维成长光谱</div>
         <canvas id="radar-canvas"></canvas>
@@ -258,7 +289,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.24s">
+    <div class="sec fade-enter" style="animation-delay:.28s">
       <div class="sec-title">你的三阶画像</div>
       <div class="tiers">
         ${['low', 'mid', 'high'].map(k => {
@@ -276,7 +307,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.28s">
+    <div class="sec fade-enter" style="animation-delay:.32s">
       <div class="sec-title">优势与盲点</div>
       <div class="sb-grid">
         <div class="card">
@@ -290,8 +321,9 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.32s">
+    <div class="sec fade-enter" style="animation-delay:.36s">
       <div class="sec-title">通往已觉醒的路径</div>
+      <div class="sec-sub">类型通用 · 长期方向</div>
       <div class="card">
         <div class="growth-list">
           ${t.growth.map(g => `<div class="growth-item"><span class="growth-num"></span><span class="growth-txt">${g}</span></div>`).join('')}
@@ -299,7 +331,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.36s">
+    <div class="sec fade-enter" style="animation-delay:.4s">
       <div class="sec-title">写给你的话</div>
       <div class="golden-box">
         <div class="golden-quote">${t.quote}</div>
@@ -307,7 +339,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="r-foot fade-enter" style="animation-delay:.4s">
+    <div class="r-foot fade-enter" style="animation-delay:.44s">
       <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}</strong><br>当前处于「${TIER[tier].name}」阶段 · 成熟度 ${r.overall}%</div>
       <div class="foot-btns">
         <button class="fbtn" onclick="restart()">重新测试</button>
