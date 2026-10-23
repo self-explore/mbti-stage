@@ -207,6 +207,7 @@ function buildBarnum(r, t) {
 
   return {
     lead,
+    gift: TYPE_GIFT[t.code] || '',
     lines: [dimLine].concat(typeLines, tierLines),
     close: BARNUM_CLOSE[tier]
   };
@@ -251,10 +252,15 @@ function showResult() {
     </div>
 
     <div class="sec fade-enter" style="animation-delay:.09s">
-      <div class="sec-title">说中你的那几句话</div>
+      <div class="sec-title">送给你的一段话</div>
       <div class="sec-sub">结合 ${t.code} 特质与你本次的作答轨迹生成</div>
       <div class="card barnum-card">
         <p class="barnum-lead">${barnum.lead}</p>
+        <div class="gift-card">
+          <div class="gift-mark">送给 ${t.nick}</div>
+          <p class="gift-text">${barnum.gift}</p>
+        </div>
+        <div class="gift-more">还有几句，大概也说中了你</div>
         <div class="barnum-list">
           ${barnum.lines.map((x, i) => `
             <div class="barnum-item">
