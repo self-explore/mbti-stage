@@ -16,10 +16,11 @@ let lastResult = null;
 // 想调比例改这两个数就行：LOW_MAX 调大会让「未觉醒」变多，MID_MAX 调大会让「已觉醒」变少
 const LOW_MAX = 61, MID_MAX = 72;
 function tierOf(pct) { if (pct <= LOW_MAX) return 'low'; if (pct <= MID_MAX) return 'mid'; return 'high'; }
+// name=觉醒体系命名，stage=高中低阶命名（两套并行展示：主标题用 stage，三档条用 name+昵称）
 const TIER = {
-  low:  { name: '未觉醒', tag: 'low'  },
-  mid:  { name: '觉醒中', tag: 'mid'  },
-  high: { name: '已觉醒', tag: 'high' }
+  low:  { name: '未觉醒', stage: '低阶', tag: 'low'  },
+  mid:  { name: '觉醒中', stage: '中阶', tag: 'mid'  },
+  high: { name: '已觉醒', stage: '高阶', tag: 'high' }
 };
 const DIM_TIER_TXT = {
   low:  '还困在本能和防御里，是当下的卡点',
@@ -176,6 +177,41 @@ function drawRadar(canvasId, radar) {
   radar.forEach((d, i) => { const ang = -Math.PI / 2 + i * (2 * Math.PI / n); ctx.fillText(d.label, cx + (R + 30) * Math.cos(ang), cy + (R + 24) * Math.sin(ang)); });
 }
 
+// ---------- 巴纳姆共鸣文案：按类型 + 阶位 + 最弱维度组合 ----------
+function buildBarnum(r, t) {
+  const tier = r.tier;
+  const seed = r.overall * 7 + t.code.charCodeAt(0) * 13 + t.code.length;
+
+  // 1) 类型专属句：确定性抽 3 条（同一份作答每次结果一致）
+  const pool = TYPE_BARNUM[t.code] || [];
+  const typeLines = seededShuffle(pool.map((_, i) => i), seed).slice(0, 3).map(i => pool[i]);
+
+  // 2) 阶位共性句：抽 2 条
+  const tierLines = seededShuffle(TIER_BARNUM[tier].slice(), seed + 31).slice(0, 2);
+
+  // 3) 从真实作答数据出发的一条，放在最前面当「证据」
+  //    六维里有明显短板 → 说短板（扎心）；整体都不差 → 改说最强项，避免出现「最低 75% 却夸你」这种自相矛盾
+  const sorted = r.radar.slice().sort((a, b) => a.pct - b.pct);
+  const minDim = sorted[0];
+  let dimLine;
+  if (minDim.tier === 'low') {
+    dimLine = `你在「${minDim.label}」这一项最低（${minDim.pct}%）——${DIM_BARNUM[minDim.key].low}`;
+  } else {
+    const maxDim = sorted[sorted.length - 1];
+    dimLine = `你六项里最弱的一项也有 ${minDim.pct}%，整体相当均衡；其中「${maxDim.label}」最高（${maxDim.pct}%）——${DIM_BARNUM[maxDim.key].high}`;
+  }
+
+  const lead = (BARNUM_LEAD[tier] || '')
+    .replace('{pct}', r.overall).replace('{code}', t.code)
+    .replace('{name}', t.name).replace('{nick}', t.nick);
+
+  return {
+    lead,
+    lines: [dimLine].concat(typeLines, tierLines),
+    close: BARNUM_CLOSE[tier]
+  };
+}
+
 // ---------- 颜色加深（阶位卡渐变） ----------
 function darken(hex, amt) {
   const h = hex.replace('#', '');
@@ -189,6 +225,7 @@ function darken(hex, amt) {
 function showResult() {
   const r = compute(); lastResult = r;
   const t = selType, tier = r.tier, stage = t.stages[tier];
+  const barnum = buildBarnum(r, t);
   show('result-page');
   const scroll = document.getElementById('result-scroll');
   const srcWord = tier === 'high' ? '已然通透' : tier === 'mid' ? '正在成长' : '蓄力待发';
@@ -202,21 +239,41 @@ function showResult() {
       <div class="stage-top" style="background:linear-gradient(155deg,${t.color},${darken(t.color, 42)})">
         <div class="stage-tier-badge">${TIER[tier].name}</div>
         <div class="stage-pct">成熟度 ${r.overall}%</div>
-        <div class="stage-code">${t.code}</div>
+        <div class="stage-code">${TIER[tier].stage} · ${t.code}</div>
+        <div class="stage-nick-row">
+          ${['low', 'mid', 'high'].map(k => `
+            <span class="sn-item ${k === tier ? 'cur' : ''}">${TIER[k].name} · ${t.nick}</span>
+          `).join('')}
+        </div>
         <div class="stage-name">${t.name} · ${GROUPS[t.group].name}</div>
         <div class="stage-fn">认知功能 ${t.functions}</div>
-        <div class="stage-tier-name">${TIER[tier].name} · ${t.code}</div>
         <div class="stage-tier-title">「${stage.title}」</div>
       </div>
       <div class="stage-bottom"><p class="stage-summary">${stage.summary}</p></div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.08s">
+    <div class="sec fade-enter" style="animation-delay:.09s">
+      <div class="sec-title">说中你的那几句话</div>
+      <div class="sec-sub">结合 ${t.code} 特质与你本次的作答轨迹生成</div>
+      <div class="card barnum-card">
+        <p class="barnum-lead">${barnum.lead}</p>
+        <div class="barnum-list">
+          ${barnum.lines.map((x, i) => `
+            <div class="barnum-item">
+              <span class="bn-idx">${String(i + 1).padStart(2, '0')}</span>
+              <span class="bn-txt">${x}</span>
+            </div>`).join('')}
+        </div>
+        <div class="barnum-close">${barnum.close}</div>
+      </div>
+    </div>
+
+    <div class="sec fade-enter" style="animation-delay:.13s">
       <div class="sec-title">为什么会这样</div>
       <div class="card"><p class="deep-why">${stage.why}</p></div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.12s">
+    <div class="sec fade-enter" style="animation-delay:.17s">
       <div class="sec-title">你是这样活的</div>
       <div class="card">
         <div class="scene-list">
@@ -229,7 +286,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.16s">
+    <div class="sec fade-enter" style="animation-delay:.21s">
       <div class="sec-title">现在轮到你回答</div>
       <div class="card">
         <div class="ask-list">
@@ -242,7 +299,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.2s">
+    <div class="sec fade-enter" style="animation-delay:.25s">
       <div class="sec-title">给你的专属建议</div>
       <div class="sec-sub">${t.code} × ${TIER[tier].name} 定制 · 本周就能开始</div>
       <div class="card advice-card">
@@ -273,7 +330,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="duo fade-enter" style="animation-delay:.24s">
+    <div class="duo fade-enter" style="animation-delay:.29s">
       <div class="duo-card">
         <div class="card-title">六维成长光谱</div>
         <canvas id="radar-canvas"></canvas>
@@ -289,14 +346,14 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.28s">
+    <div class="sec fade-enter" style="animation-delay:.33s">
       <div class="sec-title">你的三阶画像</div>
       <div class="tiers">
         ${['low', 'mid', 'high'].map(k => {
           const s = t.stages[k], isCur = k === tier;
           return `<div class="tier ${isCur ? 'cur' : 'dim-out'}">
             <div class="tier-head">
-              <span class="tier-tag ${k}">${TIER[k].name}</span>
+              <span class="tier-tag ${k}">${TIER[k].name} · ${t.nick}</span>
               ${isCur ? '<span class="tier-cur-mark">◀ 你在这里</span>' : ''}
             </div>
             <div class="tier-title">${s.title}</div>
@@ -307,7 +364,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.32s">
+    <div class="sec fade-enter" style="animation-delay:.37s">
       <div class="sec-title">优势与盲点</div>
       <div class="sb-grid">
         <div class="card">
@@ -321,7 +378,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.36s">
+    <div class="sec fade-enter" style="animation-delay:.41s">
       <div class="sec-title">通往已觉醒的路径</div>
       <div class="sec-sub">类型通用 · 长期方向</div>
       <div class="card">
@@ -331,7 +388,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.4s">
+    <div class="sec fade-enter" style="animation-delay:.45s">
       <div class="sec-title">写给你的话</div>
       <div class="golden-box">
         <div class="golden-quote">${t.quote}</div>
@@ -339,8 +396,8 @@ function showResult() {
       </div>
     </div>
 
-    <div class="r-foot fade-enter" style="animation-delay:.44s">
-      <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}</strong><br>当前处于「${TIER[tier].name}」阶段 · 成熟度 ${r.overall}%</div>
+    <div class="r-foot fade-enter" style="animation-delay:.49s">
+      <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}（${t.nick}）</strong><br>当前处于「${TIER[tier].stage} · ${TIER[tier].name}」· 成熟度 ${r.overall}%</div>
       <div class="foot-btns">
         <button class="fbtn" onclick="restart()">重新测试</button>
         <button class="fbtn ghost" onclick="shareResult()">分享结果</button>
@@ -354,7 +411,8 @@ function showResult() {
 function restart() { goTypePage(); }
 function shareResult() {
   const t = selType, tier = lastResult ? lastResult.tier : 'mid';
-  const txt = `我刚测了 MBTI 心智阶位，我是「${t.code} · ${t.name}」的${TIER[tier].name}状态，来测测你在哪个阶段？`;
+  const pct = lastResult ? lastResult.overall : 0;
+  const txt = `我测出来是「${TIER[tier].stage} · ${t.code}」——${TIER[tier].name}的${t.nick}，成熟度 ${pct}%。来测测你在哪一阶？`;
   if (navigator.share) navigator.share({ title: 'MBTI 心智阶位测评', text: txt, url: location.href }).catch(() => {});
   else { alert('链接已复制，去分享给朋友吧！\n' + location.href); }
 }
