@@ -241,9 +241,7 @@ function showResult() {
         <div class="stage-pct">成熟度 ${r.overall}%</div>
         <div class="stage-code">${TIER[tier].stage} · ${t.code}</div>
         <div class="stage-nick-row">
-          ${['low', 'mid', 'high'].map(k => `
-            <span class="sn-item ${k === tier ? 'cur' : ''}">${TIER[k].name} · ${t.nick}</span>
-          `).join('')}
+          <span class="sn-item cur">${TIER[tier].name} · ${t.nick}</span>
         </div>
         <div class="stage-name">${t.name} · ${GROUPS[t.group].name}</div>
         <div class="stage-fn">认知功能 ${t.functions}</div>
@@ -397,7 +395,7 @@ function showResult() {
     </div>
 
     <div class="r-foot fade-enter" style="animation-delay:.49s">
-      <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}（${t.nick}）</strong><br>当前处于「${TIER[tier].stage} · ${TIER[tier].name}」· 成熟度 ${r.overall}%</div>
+      <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}（${t.nick}）</strong><br>当前处于「${TIER[tier].name} · ${t.nick}」· 成熟度 ${r.overall}%</div>
       <div class="foot-btns">
         <button class="fbtn" onclick="restart()">重新测试</button>
         <button class="fbtn ghost" onclick="shareResult()">分享结果</button>
