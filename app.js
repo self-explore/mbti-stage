@@ -227,6 +227,7 @@ function showResult() {
   const r = compute(); lastResult = r;
   const t = selType, tier = r.tier, stage = t.stages[tier];
   const barnum = buildBarnum(r, t);
+  const career = CAREER_BY_TYPE[t.code] || CAREER_BY_TYPE.INFP;
   show('result-page');
   const scroll = document.getElementById('result-scroll');
   const srcWord = tier === 'high' ? '已然通透' : tier === 'mid' ? '正在成长' : '蓄力待发';
@@ -236,7 +237,7 @@ function showResult() {
       <h1 class="r-h1">你的心智阶位画像</h1>
     </div>
 
-    <div class="stage-card fade-enter" style="animation-delay:.05s">
+    <div class="stage-card fade-enter" style="animation-delay:0.05s">
       <div class="stage-top" style="background:linear-gradient(155deg,${t.color},${darken(t.color, 42)})">
         <div class="stage-tier-badge">${TIER[tier].name}</div>
         <div class="stage-pct">成熟度 ${r.overall}%</div>
@@ -251,7 +252,7 @@ function showResult() {
       <div class="stage-bottom"><p class="stage-summary">${stage.summary}</p></div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.09s">
+    <div class="sec fade-enter" style="animation-delay:0.09s">
       <div class="sec-title">送给你的一段话</div>
       <div class="sec-sub">结合 ${t.code} 特质与你本次的作答轨迹生成</div>
       <div class="card barnum-card">
@@ -260,24 +261,38 @@ function showResult() {
           <div class="gift-mark">送给 ${t.nick}</div>
           <p class="gift-text">${barnum.gift}</p>
         </div>
-        <div class="gift-more">还有几句，大概也说中了你</div>
-        <div class="barnum-list">
-          ${barnum.lines.map((x, i) => `
-            <div class="barnum-item">
-              <span class="bn-idx">${String(i + 1).padStart(2, '0')}</span>
-              <span class="bn-txt">${x}</span>
-            </div>`).join('')}
-        </div>
-        <div class="barnum-close">${barnum.close}</div>
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.13s">
+    <div class="sec fade-enter" style="animation-delay:0.13s">
+      <div class="sec-title">适合你的岗位</div>
+      <div class="sec-sub">按 ${t.code} 的天赋结构，以及你现在的阶位给出</div>
+      <div class="card career-card">
+        <div class="career-jobs">
+          ${career.jobs.map(j => `<span class="cj-item">${j}</span>`).join('')}
+        </div>
+        <div class="career-block">
+          <div class="cb-label">为什么适合</div>
+          <p class="cb-text">${career.fit}</p>
+        </div>
+        <div class="career-block">
+          <div class="cb-label">适合你的环境</div>
+          <p class="cb-text">${career.env}</p>
+        </div>
+        <div class="career-block warn">
+          <div class="cb-label">需要避开</div>
+          <p class="cb-text">${career.avoid}</p>
+        </div>
+        <div class="career-tier">${CAREER_TIER[tier]}</div>
+      </div>
+    </div>
+
+    <div class="sec fade-enter" style="animation-delay:0.17s">
       <div class="sec-title">为什么会这样</div>
       <div class="card"><p class="deep-why">${stage.why}</p></div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.17s">
+    <div class="sec fade-enter" style="animation-delay:0.21s">
       <div class="sec-title">你是这样活的</div>
       <div class="card">
         <div class="scene-list">
@@ -290,7 +305,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.21s">
+    <div class="sec fade-enter" style="animation-delay:0.25s">
       <div class="sec-title">现在轮到你回答</div>
       <div class="card">
         <div class="ask-list">
@@ -303,7 +318,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.25s">
+    <div class="sec fade-enter" style="animation-delay:0.29s">
       <div class="sec-title">给你的专属建议</div>
       <div class="sec-sub">${t.code} × ${TIER[tier].name} 定制 · 本周就能开始</div>
       <div class="card advice-card">
@@ -334,7 +349,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="duo fade-enter" style="animation-delay:.29s">
+    <div class="duo fade-enter" style="animation-delay:0.33s">
       <div class="duo-card">
         <div class="card-title">六维成长光谱</div>
         <canvas id="radar-canvas"></canvas>
@@ -350,7 +365,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.33s">
+    <div class="sec fade-enter" style="animation-delay:0.37s">
       <div class="sec-title">你的三阶画像</div>
       <div class="tiers">
         ${['low', 'mid', 'high'].map(k => {
@@ -368,7 +383,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.37s">
+    <div class="sec fade-enter" style="animation-delay:0.41s">
       <div class="sec-title">优势与盲点</div>
       <div class="sb-grid">
         <div class="card">
@@ -382,7 +397,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.41s">
+    <div class="sec fade-enter" style="animation-delay:0.45s">
       <div class="sec-title">通往已觉醒的路径</div>
       <div class="sec-sub">类型通用 · 长期方向</div>
       <div class="card">
@@ -392,7 +407,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="sec fade-enter" style="animation-delay:.45s">
+    <div class="sec fade-enter" style="animation-delay:0.49s">
       <div class="sec-title">写给你的话</div>
       <div class="golden-box">
         <div class="golden-quote">${t.quote}</div>
@@ -400,7 +415,7 @@ function showResult() {
       </div>
     </div>
 
-    <div class="r-foot fade-enter" style="animation-delay:.49s">
+    <div class="r-foot fade-enter" style="animation-delay:0.53s">
       <div class="foot-score">你的人格 <strong>${t.code} · ${t.name}（${t.nick}）</strong><br>当前处于「${TIER[tier].name} · ${t.nick}」· 成熟度 ${r.overall}%</div>
       <div class="foot-btns">
         <button class="fbtn" onclick="restart()">重新测试</button>
