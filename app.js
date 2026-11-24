@@ -226,6 +226,8 @@ function darken(hex, amt) {
 function showResult() {
   const r = compute(); lastResult = r;
   const t = selType, tier = r.tier, stage = t.stages[tier];
+  const fr = FRIEND[t.code][tier];
+  const frT = TYPES.find(x => x.code === fr.t);
   const barnum = buildBarnum(r, t);
   const career = CAREER_BY_TYPE[t.code] || CAREER_BY_TYPE.INFP;
   show('result-page');
@@ -284,6 +286,22 @@ function showResult() {
           <p class="cb-text">${career.avoid}</p>
         </div>
         <div class="career-tier">${CAREER_TIER[tier]}</div>
+      </div>
+    </div>
+
+    <div class="sec fade-enter" style="animation-delay:0.135s">
+      <div class="sec-title">最适合做朋友的 MBTI</div>
+      <div class="sec-sub">TA 也标了阶位 · 你们不必同阶，合适比对等更重要</div>
+      <div class="card friend-card">
+        <div class="friend-head">
+          <div class="friend-code">${fr.t}</div>
+          <div class="friend-meta">
+            <div class="friend-name">${frT.name} · ${frT.nick}</div>
+            <div class="friend-stage">TA 的阶位：${TIER[fr.stage].stage} · ${TIER[fr.stage].name}</div>
+          </div>
+        </div>
+        <p class="friend-why">${fr.why}</p>
+        <p class="friend-note">这份推荐结合你的 ${t.code} 与「${TIER[tier].name}」状态给出：同一个人在不同阶段，需要的朋友是不一样的。</p>
       </div>
     </div>
 
